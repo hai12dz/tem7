@@ -1,0 +1,247 @@
+﻿@model List<Caulacbo>
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-warning">
+        @TempData["Message"]
+    </div>
+}
+
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_LayoutKiemTra.cshtml";
+
+}
+
+
+@section menu {
+    <div class="container">
+        <div class="package-menu m-b-60">
+
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                    var getUrl = "https://localhost:7212/api/trandauapi/" + @item.CauLacBoId;
+
+                    <div style="margin:auto" class="place__item">
+
+
+
+                        <li> <a class="btn" onclick="showTranDauTheoMaCLB('@getUrl')">@item.CauLacBoId</a></li>
+
+                    </div>
+                }
+
+
+
+
+            </div>
+
+        </div>
+    </div>
+
+}
+
+
+
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Ngày thi đấu
+            </th>
+            <th>
+                Vòng
+            </th>
+
+            <th>
+                Kết quả
+            </th>
+            <th>
+
+                Trạng thái
+            </th>
+            <th>
+                Ảnh
+
+            </th>
+            <th>
+                Câu lạc bộ khách
+
+            </th>
+            <th>
+                Câu lạc bộ nhà
+            </th>
+            <th>
+                Sân vận động
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in ViewBag.lsttrandau)
+        {
+            <tr>
+                <td>
+                    @item.NgayThiDau
+
+                </td>
+                <td>
+                    @item.Vong
+                </td>
+
+                <td>
+                    @item.KetQua
+                </td>
+                <td>
+                    @item.TrangThai
+                </td>
+                <td>
+                    @item.Anh
+                </td>
+                <td>
+                    @item.Clbkhach
+                </td>
+                <td>
+                    @item.Clbnha
+                </td>
+                <td>
+                    @item.SanVanDongId
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.TranDauId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.TranDauId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.TranDauId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<script>
+    function showTranDauTheoMaCLB(getUrl) {
+        console.log('Fetching from URL:', getUrl); // Kiểm tra URL
+
+        document.querySelector('#renderbody').innerHTML = '';
+
+
+        $.ajax({
+            url: getUrl,
+            method: 'GET',
+            success: function (data) {
+                console.log('Data received:', data); // Kiểm tra dữ liệu
+                if (!data) {
+                    throw new Error('Data is null or undefined');
+                }
+                let str = '';
+
+
+                if (Array.isArray(data) && data.length > 0) {
+
+
+                    str += '<p>';
+                    str += '<a asp-action="Create">Create New</a>';
+                    str += '</p>';
+                    str += '<table class="table">';
+
+                    str += 'thead>';
+
+                    str += '<tr>';
+                    str += '<th>';
+                    str += 'Ngày thi đấu';
+                    str += '</th>';
+                    str += '<th>';
+                    str += 'Vòng';
+                    str += '</th>';
+
+                    str += '<th>';
+                    str += 'Kết quả';
+                    str += '</th>';
+                    str += '<th>';
+
+                    str += 'Trạng thái';
+                    str += '</th>';
+                    str += '<th>';
+                    str += 'Ảnh';
+
+                    str += '</th>';
+                    str += '<th>';
+                    str += 'Câu lạc bộ khách';
+
+                    str += '</th>';
+                    str += '<th>';
+                    str += 'Câu lạc bộ nhà';
+                    str += '</th>';
+                    str += '<th>';
+                    str += 'Sân vận động';
+                    str += '</th>';
+                    str += '<th></th>';
+                    str += '</tr>';
+
+                    str += '</thead>';
+                    str += '<tbody>';
+
+                    data.forEach(item => {
+                        console.log('Processing item:', item); // Kiểm tra từng item
+
+                       
+                        str += '<tr>';
+                        str += '<td>';
+
+                        str += item.ngayThiDau;
+
+                        str += '</td >';
+                        str += '<td>';
+                        str += item.vong;
+                        str += '</td >';
+
+                        str += '<td>';
+                        str += item.ketQua;
+                        str += '</td >';
+                        str += '<td>';
+                        str += item.trangThai;
+                        str += '</td >';
+                        str += '<td>';
+                        str += item.anh;
+                        str += '</td >';
+                        str += '<td>';
+                        str += item.clbkhach;
+                        str += '</td >';
+                        str += '<td>';
+                        str += item.clbnha;
+                        str += '</td >';
+                        str += '<td>';
+                        str += item.sanVanDongId;
+                        str += '</td >';
+                        str += '<td>';
+                        str += '<a href="/Edit?id=' + item.tranDauId + '">Edit</a> | ';
+
+                        str += '<a href="/Details?id=' + item.tranDauId + '">Details</a> | ';
+                        str += '<a href="/Delete?id=' + item.tranDauId + '">Delete</a>';
+
+                        str += '</td >';
+                        str += '</tr >';
+                     
+
+
+                        });
+
+                    str += '</tbody>';
+                    str += '</table>';
+                } else {
+                    document.getElementById('renderbody').innerHTML = '<p>No data available.</p>';
+                }
+
+                document.getElementById('renderbody').innerHTML = str;
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Error: ' + textStatus + ' - ' + errorThrown);
+            }
+        });
+    }
+</script>
+
